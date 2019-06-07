@@ -8,16 +8,21 @@
 
 import React, {Component} from 'react';
 import {Text, View} from 'react-native';
-
-
-
-export default class App extends Component {
+import{createAppContainer,createStackNavigator} from 'react-navigation'
+import Login from './components/Login'
+import Home from './components/Home'
+class App extends Component {
   render() {
     return (
-      <View >
-        <Text>Welcome to React Native!</Text>
-      </View>
+      <MainRoute initialRoute="Login"/>
     );
   }
 }
 
+
+const MainRoute=createStackNavigator({
+  Login:{screen:Login},Home:{screen:Home}
+})
+
+let myapp=createAppContainer(MainRoute);
+export default myapp;
