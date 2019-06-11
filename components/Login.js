@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
-import { View, Text,TextInput,Button,ToastAndroid,AsyncStorage,ActivityIndicator } from 'react-native';
+import { View, Text,TextInput,Button,ToastAndroid,AsyncStorage,ActivityIndicator,ImageBackground } from 'react-native';
 import {f,auth} from '../firebaseConfig/config'
-
 
 
 
@@ -46,7 +45,9 @@ componentDidMount(){
                 AsyncStorage.setItem('@userpass:password',this.state.PassWord);
                 this.setState({loading:false});
                 console.log(res);
-                this.navigate('Home',{res});
+                this.props.dispatch({ type: 'SET_RESPONSE',res });
+                console.log('redux',this.props.res);
+                this.navigate('Home');
                }
                else{
                    ToastAndroid.show('An verification Email sent to your email',ToastAndroid.LONG);
@@ -56,7 +57,7 @@ componentDidMount(){
            
         }
 
-        ).catch(err=>{this.setState({loading:false});ToastAndroid.show(err.message,ToastAndroid.SHORT)});
+        ).catch(err=>{this.setState({loading:false});console.log(err)});
        
     }
    
@@ -87,13 +88,14 @@ componentDidMount(){
 
   render() {
     return (
-      <View style={{flex:1,justifyContent:'center',alignItems:'center',backgroundColor:'yellow'}}>
-            {this.state.loading ? <ActivityIndicator size={"large"}/> : null}
+      <ImageBackground style={{width:'100%',height:'100%'}} resizeMode="stretch" source={require('../assets/background.png')}>
+      <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+            {this.state.loading ? <ActivityIndicator color="blue" size={"large"}/> : null}
            <View style={{justifyContent:'center',alignItems:'center',width:'50%'}}>
             <TextInput defaultValue={this.state.username}  onChangeText={(txt)=>this.setState({username:txt})} placeholder="Email"
-             style={{width:'100%',borderWidth:1}}/>
+             style={{width:'100%',borderWidth:1,borderRadius:40,backgroundColor:'white'}}/>
             <TextInput defaultValue={this.state.PassWord}  onChangeText={(txt)=>this.setState({PassWord:txt})} secureTextEntry={true}
-             placeholder="PassWord"  style={{width:'100%',marginVertical:8,borderWidth:1}}/>
+             placeholder="PassWord"  style={{width:'100%',marginVertical:8,borderWidth:1,borderRadius:40,backgroundColor:'white'}}/>
             </View>
           <View style={{width:'50%'}}>
             <Button title="Login" onPress={()=>this.showLoginForm()} /> 
@@ -103,6 +105,12 @@ componentDidMount(){
              <Button title="SignUp" color='red' onPress={()=>this.showSignUpForm()}/>
             </View>
       </View>
+      </ImageBackground>
     );
   }
 }
+
+
+
+
+ 
