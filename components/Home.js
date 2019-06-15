@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Button,Text,Icon,Drawer,Header,Left,Body,Title,Right,Footer, FooterTab} from 'native-base';
 import SideBar from './sidebar';
 import AddQuestion from './AddQuestion';
-import Profile from './Profile';
+import MyQuestions from './MyQuestions';
 import Questions from './Questions';
 
 
@@ -45,7 +45,7 @@ closeDrawer=()=>{
     let AppComponent = null;
 
     if (this.state.index == 0) {
-       AppComponent = <Profile/>
+       AppComponent = <MyQuestions/>
     } else if(this.state.index==1) {
        AppComponent = <AddQuestion/>
     }
@@ -89,8 +89,8 @@ closeDrawer=()=>{
           </FooterTab>
             <FooterTab>
             <Button onPress={()=>this.switchScreen(0)} active={this.state.index ===0 ? true : false} >
-            <Text> Profile</Text>
-            <Icon type="FontAwesome" name='user-circle-o' />
+            <Text> My Questions</Text>
+            <Icon type="AntDesign" name='profile' />
             </Button>
         </FooterTab>
     </Footer>

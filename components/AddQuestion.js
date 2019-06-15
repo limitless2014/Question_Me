@@ -54,7 +54,7 @@ export default class AddQuestion extends Component {
     render() {
         return (
             <View style={{flex:1}}>
-                <TextInput style={{margin:5}} onChangeText={(txt)=>this.setState({title:txt})} placeholder="Question title"/>
+                <TextInput style={{margin:5,borderWidth:1}} onChangeText={(txt)=>this.setState({title:txt})} placeholder="Question title"/>
                 <Form>
                     <Picker
                     note
@@ -71,10 +71,11 @@ export default class AddQuestion extends Component {
                     <Picker.Item label="Sport" value="Sport" />
                     </Picker>
                 </Form>
-                <Textarea style={{margin:5}} rowSpan={5} onChangeText={(txt)=>this.setState({comments:txt})} placeholder="Comments"/>
-                <Button title="Post" style={{alignSelf:'center',width:'20%',justifyContent:'center'}}
+                <Textarea style={{margin:5,borderWidth:1}} rowSpan={5} onChangeText={(txt)=>this.setState({comments:txt})} placeholder="Comments"/>
+                <View style={{width:'50%',alignSelf:'center',marginTop:10}}>
+                <Button title="Post" style={{alignSelf:'center',justifyContent:'center'}}
                  onPress={()=>this.createQuestion(this.state.title,this.state.comments)}/>
-               
+                </View>
                 
             </View>
         )
