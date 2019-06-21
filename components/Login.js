@@ -44,9 +44,7 @@ componentDidMount(){
                 AsyncStorage.setItem('@userid:username',this.state.username);
                 AsyncStorage.setItem('@userpass:password',this.state.PassWord);
                 this.setState({loading:false});
-                console.log(res);
                 this.props.dispatch({ type: 'SET_RESPONSE',res });
-                console.log('redux',this.props.res);
                 this.navigate('Home');
                }
                else{

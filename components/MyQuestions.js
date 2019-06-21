@@ -1,13 +1,14 @@
 import React, { Component } from 'react'
 import { Text, View,FlatList,TouchableHighlight } from 'react-native'
 import {f} from '../firebaseConfig/config';
-import {Button, Icon,} from 'native-base'
+import {Button, Icon,Spinner} from 'native-base'
 
 export default class MyQuestions extends Component {
 
     state={
         refresh:false,
         data:null,
+        loading:false
     }
 
 
@@ -15,23 +16,18 @@ export default class MyQuestions extends Component {
 
     componentWillMount(){
         let uid=f.auth().currentUser.uid;
+        this.setState({loading:true});
         f.database().ref(`Questions/${uid}`).once('value', snapshot=> {
           const exists=(snapshot.val() !=null);
           if(exists){
-            
             const Questions = snapshot.val();
             let newData=[];
-
               Object.entries(Questions).forEach(([key, val])=> {
                 newData.push({val});
               })
-              
-       
-            console.log(newData);
-            this.setState({data:newData});
-            // console.log('databse',this.state.data);
+            this.setState({data:newData,loading:false});
           } 
-        }).catch((err)=>console.log(err));
+        }).catch((err)=>{console.log(err);this.setState({loading:false})})
       }
 
 
@@ -87,6 +83,11 @@ export default class MyQuestions extends Component {
 
        
     render() {
+      if(this.state.loading){
+        return <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+               <Spinner color='blue' />
+               </View>
+      }
         return (
             <View style={{flex:1}}>
                  

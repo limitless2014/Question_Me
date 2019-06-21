@@ -33,7 +33,7 @@ switchScreen(index) {
 
   render() {
     
-    console.log('response in home',this.state.res);
+    
     let AppComponent = null;
 
     if (this.state.index == 0) {
