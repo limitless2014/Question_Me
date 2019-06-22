@@ -2,10 +2,9 @@ import React, { Component } from 'react'
 import { Text, View ,FlatList,TouchableHighlight} from 'react-native'
 import {f} from '../firebaseConfig/config';
 import {Button, Icon,Spinner} from 'native-base'
-import DetailsPage from './DetailsPage';
-import {createAppContainer,createStackNavigator} from 'react-navigation'
+import AnswersPage from './AnswersPage';
 
- class Questions extends Component {
+ export default class Questions extends Component {
 
 
     state={
@@ -51,7 +50,9 @@ import {createAppContainer,createStackNavigator} from 'react-navigation'
            this.setState({refresh:false});
        }
 
-       
+       goback=()=>{
+       this.setState({details:false});
+       }
 
        like=(key,rootkey,index)=>{
         let updatedlikes=this.state.data[index].val.likes+1;
@@ -73,6 +74,7 @@ import {createAppContainer,createStackNavigator} from 'react-navigation'
     
        itemPressed=(item,index)=>{
         let answersArray=[];
+        this.setState({loading:true});
         f.database().ref(`Questions/${item.rootkey}/${item.key}/answers`).once('value', snapshot=> {
           const exists=(snapshot.val() !=null);
           if(exists){
@@ -81,10 +83,11 @@ import {createAppContainer,createStackNavigator} from 'react-navigation'
               answersArray.push(val);
             });
            }
-           
+           this.setState({loading:false,item:item,index:index,answers:answersArray,details:true});
         }).catch((err)=>console.log(err));
-         this.setState({item:item,index:index,details:true,answers:answersArray});
         
+         
+         
        }
 
 
@@ -130,7 +133,7 @@ import {createAppContainer,createStackNavigator} from 'react-navigation'
     render() {
          if(this.state.details)
          {
-           return <DetailsPage item={this.state.item} data={this.state.data} answers={this.state.answers} index={this.state.index}   />
+           return <AnswersPage item={this.state.item} data={this.state.data} answers={this.state.answers} index={this.state.index} goback={()=>this.goback()}   />
          }
 
          if(this.state.loading){
@@ -181,11 +184,3 @@ import {createAppContainer,createStackNavigator} from 'react-navigation'
     }
 }
 
-const mainroot=createStackNavigator({
-  Questions:{screen:Questions},DetailsPage:{screen:DetailsPage}
-},{
-  initialRouteName: 'Questions',
-})
-const Navigation=createAppContainer(mainroot);
-
-export default Navigation;

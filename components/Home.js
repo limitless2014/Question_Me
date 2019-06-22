@@ -50,22 +50,22 @@ switchScreen(index) {
       {AppComponent}
      
      <Footer >
-          <FooterTab>
+          <FooterTab  style={{backgroundColor:'red'}} >
             <Button onPress={()=>this.switchScreen(2)} active={this.state.index ===2 ? true : false} >
-            <Text>Questions</Text>
+           
                 <Icon type="MaterialCommunityIcons" name='comment-question' />
             </Button>
             </FooterTab>
-            <FooterTab>
+            <FooterTab style={{backgroundColor:'red'}}>
             <Button onPress={()=>this.switchScreen(1)} active={this.state.index ===1 ? true : false} >
-                <Text>Add Question</Text>
+               
                 <Icon type="MaterialIcons" name='add-circle' />
             </Button>
-          </FooterTab>
-            <FooterTab>
+          </FooterTab >
+            <FooterTab style={{backgroundColor:'red'}}>
             <Button onPress={()=>this.switchScreen(0)} active={this.state.index ===0 ? true : false} >
-            <Text> My Questions</Text>
-            <Icon type="AntDesign" name='profile' />
+            
+            <Icon type="MaterialIcons" name='account-circle' />
             </Button>
         </FooterTab>
     </Footer>

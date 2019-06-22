@@ -1,21 +1,22 @@
 import React, { Component } from 'react'
 import {FlatList,Text,View} from'react-native';
-
 import {Button, Icon,Header,Left,Title,Body,Right} from 'native-base'
 import {f} from '../firebaseConfig/config';
 import { TextInput } from 'react-native-gesture-handler';
 
-export default class DetailsPage extends Component {
+export default class AnswersPage extends Component {
    
 
+   
 
-
-    state={
-       answers:this.props.answers,
-       refresh:false,
-       answer:'',
-       index:this.props.index
-    }
+ 
+  state={
+    answers:this.props.answers,
+    refresh:false,
+    answer:'',
+    index:this.props.index
+ }
+    
 
 
     static navigationOptions = {
@@ -127,7 +128,7 @@ export default class DetailsPage extends Component {
             <View style={{flex:1}}>
             <Header>
              <Left>
-              <Button transparent >
+              <Button transparent onPress={()=>this.props.goback()} >
               <Icon name="arrow-back" />
               </Button>
             </Left>
@@ -157,7 +158,7 @@ export default class DetailsPage extends Component {
                         
                     </View>
                    
-                   {this.state.answers != [] ? 
+                   {this.state.answers  ? 
                         <FlatList
                         refreshing={this.state.refresh}
                         onRefresh={this.refresh}
