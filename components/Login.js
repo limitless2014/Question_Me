@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text,TextInput,Button,ToastAndroid,AsyncStorage,ActivityIndicator,ImageBackground } from 'react-native';
+import { View, Text,TextInput,Button,ToastAndroid,AsyncStorage,ActivityIndicator,ImageBackground,CheckBox } from 'react-native';
 import {f,auth} from '../firebaseConfig/config'
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';
 
@@ -17,7 +17,8 @@ export default class Login extends Component {
 state={
   username:'',
   PassWord:'',
-  loading:false
+  loading:false,
+  showPassword:true
   
 }
 
@@ -89,6 +90,7 @@ componentDidMount(){
   
   
  onLoginOrRegister = () => {
+  this.setState({loading:true});
    GoogleSignin.configure({webClientId:"1060035696998-5n89ka56sbqjfvh582eq7jtvhjfgor6n.apps.googleusercontent.com"});
   GoogleSignin.signIn()
     .then((data) => {
@@ -99,18 +101,16 @@ componentDidMount(){
     
     }).then((user)=>{
         if(user.user.emailVerified){
-        this.navigate('Home',{user});
+         this.props.dispatch({ type: 'SET_USER',user });
+         this.setState({loading:false});
+        this.navigate('Home');
         }
         else{
-          console.log("email verification sent");
+          res.user.sendEmailVerification().then(console.log('email verification sent'));
         }
 
     })
     .catch((error) => {
-      const { code, message } = error;
-      // For details of error codes, see the docs
-      // The message contains the default Firebase string
-      // representation of the error
       console.log(error)
     });
 }
@@ -124,9 +124,14 @@ componentDidMount(){
             {this.state.loading ? <ActivityIndicator color="blue" size={"large"}/> : null}
            <View style={{justifyContent:'center',alignItems:'center',width:'50%'}}>
             <TextInput defaultValue={this.state.username}  onChangeText={(txt)=>this.setState({username:txt})} placeholder="Email"
-             style={{width:'100%',borderWidth:1,borderRadius:40,backgroundColor:'white'}}/>
-            <TextInput defaultValue={this.state.PassWord}  onChangeText={(txt)=>this.setState({PassWord:txt})} secureTextEntry={true}
-             placeholder="PassWord"  style={{width:'100%',marginVertical:8,borderWidth:1,borderRadius:40,backgroundColor:'white'}}/>
+            autoCompleteType={"email"}
+             style={{width:'100%',borderWidth:1,backgroundColor:'white'}}/>
+            <TextInput defaultValue={this.state.PassWord}  onChangeText={(txt)=>this.setState({PassWord:txt})} secureTextEntry={this.state.showPassword}
+             placeholder="PassWord"  style={{width:'100%',marginVertical:8,borderWidth:1,backgroundColor:'white'}}/>
+            </View>
+            <View style={{width:'50%',flexDirection:'row',alignItems:'center'}}>
+            <CheckBox value={!this.state.showPassword} onValueChange={()=>{this.setState({showPassword:!this.state.showPassword})}}/>
+            <Text>Show Password</Text>
             </View>
           <View style={{width:'50%'}}>
             <Button title="Login" onPress={()=>this.showLoginForm()} /> 
@@ -134,7 +139,7 @@ componentDidMount(){
             <View style={{width:'50%',marginTop:10}}>
              <Button title="SignUp" color='red' onPress={()=>this.showSignUpForm()}/>
             </View>
-            <View style={{width:'50%',marginTop:10}} >
+            <View style={{width:'50%',marginTop:10,position:'absolute',bottom:'10%'}} >
               <GoogleSigninButton
               style={{ width: '100%', height: 48 }}
               size={GoogleSigninButton.Size.Wide}

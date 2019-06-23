@@ -20,6 +20,7 @@ reducer=(state={},action)=>{
   switch(action.type)
   {
       case 'SET_RESPONSE' :return {...state,res:action.res};
+      case 'SET_USER' :return {...state,user:action.user};
       default:return  state;
   }
 }
@@ -28,9 +29,8 @@ reducer=(state={},action)=>{
 let store = createStore(combineReducers({ res: reducer }));
 
 // Connect the screens to Redux
-let LoginContainer = connect(state => ({ res: state.res }))(Login);
-let HomeContainer = connect(state => ({ res: state.res }))( Home);
-
+let LoginContainer = connect(state => ({ res: state.res ,user:state.user }))(Login);
+let HomeContainer = connect(state => ({ res: state.res ,user:state.user }))( Home);
 
  const MainRoute=createStackNavigator({
   Login:{screen:LoginContainer},Home:{screen:HomeContainer}

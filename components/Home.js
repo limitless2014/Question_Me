@@ -18,6 +18,7 @@ import Questions from './Questions';
    res: this.props.res.res,
    active:true,
    index:0,
+   user:this.props.res.user
  }
 
 
@@ -33,11 +34,11 @@ switchScreen(index) {
 
   render() {
     
-    
+   
     let AppComponent = null;
 
     if (this.state.index == 0) {
-       AppComponent = <MyQuestions/>
+       AppComponent = <MyQuestions res={this.state.res} user={this.state.user} navigate={this.navigate}  />
     } else if(this.state.index==1) {
        AppComponent = <AddQuestion/>
     }
@@ -47,8 +48,9 @@ switchScreen(index) {
     return (
       
       <View style={{flex:1}}>
-      {AppComponent}
+        {AppComponent}
      
+       
      <Footer >
           <FooterTab  style={{backgroundColor:'red'}} >
             <Button onPress={()=>this.switchScreen(2)} active={this.state.index ===2 ? true : false} >
