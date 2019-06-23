@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text,TextInput,Button,ToastAndroid,AsyncStorage,ActivityIndicator,ImageBackground } from 'react-native';
 import {f,auth} from '../firebaseConfig/config'
+import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';
 
 
 
@@ -84,6 +85,38 @@ componentDidMount(){
  }
 
 
+
+  
+  
+ onLoginOrRegister = () => {
+   GoogleSignin.configure({webClientId:"1060035696998-5n89ka56sbqjfvh582eq7jtvhjfgor6n.apps.googleusercontent.com"});
+  GoogleSignin.signIn()
+    .then((data) => {
+      // Create a new Firebase credential with the token
+      const credential = f.auth.GoogleAuthProvider.credential(data.idToken);
+      // Login with the credential
+      return f.auth().signInWithCredential(credential)
+    
+    }).then((user)=>{
+        if(user.user.emailVerified){
+        this.navigate('Home',{user});
+        }
+        else{
+          console.log("email verification sent");
+        }
+
+    })
+    .catch((error) => {
+      const { code, message } = error;
+      // For details of error codes, see the docs
+      // The message contains the default Firebase string
+      // representation of the error
+      console.log(error)
+    });
+}
+
+
+
   render() {
     return (
       <ImageBackground style={{width:'100%',height:'100%'}} resizeMode="stretch" source={require('../assets/background.png')}>
@@ -98,10 +131,17 @@ componentDidMount(){
           <View style={{width:'50%'}}>
             <Button title="Login" onPress={()=>this.showLoginForm()} /> 
             </View>
-
             <View style={{width:'50%',marginTop:10}}>
              <Button title="SignUp" color='red' onPress={()=>this.showSignUpForm()}/>
             </View>
+            <View style={{width:'50%',marginTop:10}} >
+              <GoogleSigninButton
+              style={{ width: '100%', height: 48 }}
+              size={GoogleSigninButton.Size.Wide}
+              color={GoogleSigninButton.Color.Dark}
+              onPress={()=>this.onLoginOrRegister()}
+              disabled={this.state.isSigninInProgress} />
+              </View>
       </View>
       </ImageBackground>
     );
