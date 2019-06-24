@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { Text, View,FlatList,TouchableHighlight } from 'react-native'
+import { Text, View,FlatList, Alert } from 'react-native'
 import {f} from '../firebaseConfig/config';
-import {Button, Icon,Spinner,Header,Left,Body,Title,Right,Content, Thumbnail} from 'native-base'
+import {Button, Icon,Spinner,Header,Content, Thumbnail} from 'native-base'
 import * as Progress from 'react-native-progress';
-import { auth } from 'firebase';
+
 
 export default class MyQuestions extends Component {
 
@@ -11,7 +11,7 @@ export default class MyQuestions extends Component {
         refresh:false,
         data:null,
         loading:false,
-
+        
     }
 
 
@@ -26,7 +26,7 @@ export default class MyQuestions extends Component {
             const Questions = snapshot.val();
             let newData=[];
               Object.entries(Questions).forEach(([key, val])=> {
-                newData.push({val});
+                newData.push({val,key:key});
               })
             this.setState({data:newData,loading:false});
           } 
@@ -80,41 +80,63 @@ export default class MyQuestions extends Component {
         return Math.floor(seconds)+' second'+this.pluralCheck(seconds);
        }
 
+
+
+
     calcLikePercentage=(likes,dislikes)=>{
       let likenum=parseInt(likes);
       let dislikenum=parseInt(dislikes);
-      if(likenum==dislikenum){
-        return 0.5;
+      if(likenum===0){
+        return 0;
       }
-      else if(dislikenum<likenum){
-        let result=dislikenum-likenum/likenum;
-        return 1-result/10;
+      else{
+      const sum=likenum+dislikenum;
+      let result=likenum/sum;
+      result=result.toFixed(2)
+      return result;
       }
-       
-       
-     
-      
     }
+
+
 
     calcDislikePercentage=(likes,dislikes)=>{
       let likenum=parseInt(likes);
       let dislikenum=parseInt(dislikes);
-      if(likenum==dislikenum){
-        return 0.5;
+      if(dislikenum===0){
+        return 0;
       }
-      else if(dislikenum<likenum){
-        let result=dislikenum-likenum/likenum;
-        return result/10;
+      else{
+      const sum=likenum+dislikenum;
+      let result=dislikenum/sum;
+      result=result.toFixed(2)
+      return result;
       }
-       
-       
-     
-      
     }
 
-       
-
-       
+       delete=(item,index)=>{
+        Alert.alert(
+          'Delete ?',
+          'Are You Sure to Delete This Question ?',
+          [
+            {text: 'Yes', onPress: () => {
+            let currentData=[...this.state.data];
+             currentData.splice(index, 1);
+            this.setState({data:currentData});
+            let uid=f.auth().currentUser.uid;
+            f.database().ref(`Questions/${uid}/${item.key}/`).remove()
+            .catch((error)=>console.log(error));
+            }
+          },
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+          ],
+          {cancelable: true},
+        );
+       }
+   
     render() {
    
      console.log('user',this.props.user);
@@ -146,8 +168,8 @@ export default class MyQuestions extends Component {
                   </View>
                  </View>
                  <Content padder/>
-                 <Button block onPress={()=>{f.auth().signOut();this.props.navigate('Login')}} 
-                 style={{backgroundColor:'purple'}}><Text>LogOut</Text></Button>
+                 <Button block transparent bordered onPress={()=>{f.auth().signOut();this.props.navigate('Login')}} 
+                 ><Text style={{color:'red'}}>LogOut</Text></Button>
                  <Content padder/>
                  
                     <Text style={{textAlign:'center',fontWeight:'bold',paddingBottom:5, borderBottomWidth:1.5}}>Your Questions</Text>
@@ -160,10 +182,10 @@ export default class MyQuestions extends Component {
                     data={this.state.data}
                     keyExtractor={(item,index)=>index.toString()}
                     renderItem={({item,index}) => (
-                  <TouchableHighlight underlayColor={'green'}   key={index}  onPress={()=>console.log('item pressed') }>
+                  
                     <View 
-                     style={{flex:1,flexDirection:'column',justifyContent:'flex-end',borderWidth:1,borderTopRightRadius:10
-                     ,borderBottomLeftRadius:10,borderBottomRightRadius:10,margin:5,height:150}}>
+                     style={{flex:1,flexDirection:'column',borderWidth:1,borderTopRightRadius:10
+                     ,borderBottomLeftRadius:10,borderBottomRightRadius:10,margin:5}}>
                       <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                       <Text style={{fontWeight:'bold',margin:5}}>Author : {item.val.author}</Text>
                       <Text style={{margin:5}}>{this.timeConvertor(item.val.date)}</Text>
@@ -171,26 +193,28 @@ export default class MyQuestions extends Component {
                       </View>
                         <Text style={{margin:5}}>{item.val.title}</Text>
                         <Text style={{margin:5}}>{item.val.comments}</Text>
-                        {/* <View style={{flexDirection:'row',justifyContent:'space-around',alignItems:'center'}}>
-                        <Button transparent  style={{margin:5,justifyContent:'center',marginLeft:5}} >
-                        <Text>{this.state.data[index].val.likes}</Text>
-                          <Icon type="AntDesign" name="like2" style={{color:'green'}} />
-                        </Button>
-                        <Button transparent  style={{margin:5,justifyContent:'center',marginLeft:5}}  >
-                        <Text>{this.state.data[index].val.dislikes}</Text>
-                          <Icon type="AntDesign" name="dislike2" style={{color:'red'}} />
-                        </Button>
-                        
-                        
-                        </View> */}
-                        <View style={{flexDirection:'row'}}>
-                        <Progress.Circle style={{margin:10}} progress={this.calcLikePercentage(this.state.data[index].val.likes,this.state.data[index].val.dislikes)}
-                        size={50} showsText={true} formatText={()=>{return 'Likes'}} />
-                        <Progress.Circle style={{margin:10}} progress={this.calcDislikePercentage(this.state.data[index].val.likes,this.state.data[index].val.dislikes)}
-                        size={50} showsText={true} formatText={()=>{return 'Dislikes'}} color="red" />
+                        <View style={{flexDirection:'row',justifyContent:'space-around'}}>
+                          <Text style={{fontWeight:'bold'}}>Likes</Text>
+                        <Progress.Bar style={{margin:10}} progress={this.calcLikePercentage(this.state.data[index].val.likes,this.state.data[index].val.dislikes)}
+                        size={50} />
                         </View>
+                        <View style={{flexDirection:'row',justifyContent:'space-around'}}>
+                          <Text style={{fontWeight:'bold'}}>DisLikes</Text>
+                        <Progress.Bar style={{margin:10}} progress={this.calcDislikePercentage(this.state.data[index].val.likes,this.state.data[index].val.dislikes)}
+                        size={50} color="red" />
+                        </View>
+                        
+                        <View style={{flexDirection:'row',justifyContent:'space-around',margin:5}}>
+                         <Button transparent onPress={()=>this.delete(this.state.data[index],index)} >
+                           <Icon type="MaterialCommunityIcons" name="delete" style={{color:'red'}}/>
+                         </Button>
+                         <Button transparent>
+                           <Icon type="AntDesign" name="edit" style={{color:'green'}}/>
+                         </Button>
+                        </View>
+                         
                     </View>
-                    </TouchableHighlight>
+                    
                     )}
                     /> 
                     

@@ -52,19 +52,19 @@ switchScreen(index) {
      
        
      <Footer >
-          <FooterTab  style={{backgroundColor:'red'}} >
+          <FooterTab  style={{backgroundColor:'black'}} >
             <Button onPress={()=>this.switchScreen(2)} active={this.state.index ===2 ? true : false} >
            
                 <Icon type="MaterialCommunityIcons" name='comment-question' />
             </Button>
             </FooterTab>
-            <FooterTab style={{backgroundColor:'red'}}>
+            <FooterTab style={{backgroundColor:'black'}}>
             <Button onPress={()=>this.switchScreen(1)} active={this.state.index ===1 ? true : false} >
                
                 <Icon type="MaterialIcons" name='add-circle' />
             </Button>
           </FooterTab >
-            <FooterTab style={{backgroundColor:'red'}}>
+            <FooterTab style={{backgroundColor:'black'}}>
             <Button onPress={()=>this.switchScreen(0)} active={this.state.index ===0 ? true : false} >
             
             <Icon type="MaterialIcons" name='account-circle' />

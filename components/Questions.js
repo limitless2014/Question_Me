@@ -154,7 +154,7 @@ import AnswersPage from './AnswersPage';
                       <TouchableHighlight underlayColor={'red'}   key={index}  onPress={()=>this.itemPressed(item,index) }>
                     <View
                      style={{flex:1,flexDirection:'column',justifyContent:'flex-end',borderWidth:1,borderTopRightRadius:10
-                     ,borderBottomLeftRadius:10,borderBottomRightRadius:10,backgroundColor:'#81D4FA',margin:5,height:150}}
+                     ,borderBottomLeftRadius:10,borderBottomRightRadius:10,margin:5,height:150}}
                      
                      >
                       <View style={{flexDirection:'row',justifyContent:'space-between'}}>

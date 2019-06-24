@@ -138,7 +138,7 @@ export default class AnswersPage extends Component {
             <Right />
             </Header>
           <View  style={{flexDirection:'column',borderWidth:1,borderTopRightRadius:10
-                     ,borderBottomLeftRadius:10,borderBottomRightRadius:10,backgroundColor:'#81D4FA',margin:5,height:150}}>
+                     ,borderBottomLeftRadius:10,borderBottomRightRadius:10,margin:5,height:150}}>
                       <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                       <Text style={{fontWeight:'bold',margin:5}}>Author : {this.props.item.val.author}</Text>
                       <Text style={{margin:5}}>{this.timeConvertor(this.props.item.val.date)}</Text>
@@ -167,7 +167,7 @@ export default class AnswersPage extends Component {
                         keyExtractor={(item,index)=>index.toString()}
                         renderItem={({item,index}) => (
                           <View  style={{flexDirection:'column',borderWidth:1,borderTopLeftRadius:10
-                          ,borderBottomLeftRadius:10,borderBottomRightRadius:10,backgroundColor:'red',margin:5,height:150}}>
+                          ,borderBottomLeftRadius:10,borderBottomRightRadius:10,margin:5,height:150}}>
                              <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                              <Text style={{fontWeight:'bold',margin:5}}>Author : {item.author}  </Text>
                              <Text style={{margin:5}}>{this.timeConvertor(item.time)}</Text>
