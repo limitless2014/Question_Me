@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Text, View ,FlatList,TouchableHighlight} from 'react-native'
 import {f} from '../firebaseConfig/config';
-import {Button, Icon,Spinner} from 'native-base'
+import {Button, Icon,Spinner,Header,Content} from 'native-base'
 import AnswersPage from './AnswersPage';
 
  export default class Questions extends Component {
@@ -144,7 +144,11 @@ import AnswersPage from './AnswersPage';
 
 
         return (
-                
+                <View style={{flex:1}} >
+                  <Header style={{justifyContent:'center',alignItems:'center'}} >
+                    <Text style={{fontWeight:'bold',color:'white',fontSize:20}} >All Questions</Text>
+                </Header>
+                <Content padder>
                 <FlatList
                     refreshing={this.state.refresh}
                     onRefresh={this.loadNew}
@@ -155,7 +159,6 @@ import AnswersPage from './AnswersPage';
                     <View
                      style={{flex:1,flexDirection:'column',justifyContent:'flex-end',borderWidth:1,borderTopRightRadius:10
                      ,borderBottomLeftRadius:10,borderBottomRightRadius:10,margin:5,height:150}}
-                     
                      >
                       <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                       <Text style={{fontWeight:'bold',margin:5}}>Author : {item.val.author}</Text>
@@ -179,6 +182,8 @@ import AnswersPage from './AnswersPage';
                     </TouchableHighlight>
                     )}
                     />
+                    </Content>
+                </View>
                     
         )
     }

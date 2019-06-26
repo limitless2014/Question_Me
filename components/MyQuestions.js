@@ -3,6 +3,7 @@ import { Text, View,FlatList, Alert } from 'react-native'
 import {f} from '../firebaseConfig/config';
 import {Button, Icon,Spinner,Header,Content, Thumbnail} from 'native-base'
 import * as Progress from 'react-native-progress';
+import { TextInput } from 'react-native-gesture-handler';
 
 
 export default class MyQuestions extends Component {
@@ -11,6 +12,7 @@ export default class MyQuestions extends Component {
         refresh:false,
         data:null,
         loading:false,
+        editing:false,
         
     }
 
@@ -136,11 +138,34 @@ export default class MyQuestions extends Component {
           {cancelable: true},
         );
        }
+
+       titleChange=(txt,index)=>{
+        let currentData=[...this.state.data];
+        currentData[index].val.title=txt;
+        this.setState({data:currentData});
+       }
+      commentChange=(txt,index)=>{
+        let currentData=[...this.state.data];
+        currentData[index].val.comments=txt;
+        this.setState({data:currentData});
+      }
+         
+       
+
+       saveChanges=(item,index)=>{
+       this.setState({showLoadingButton:true});
+        let uid=f.auth().currentUser.uid;
+        let title=this.state.data[index].val.title;
+        let comments=this.state.data[index].val.comments;
+        console.log('comments :',comments,'title : ',title);
+        f.database().ref(`Questions/${uid}/${item.key}/`).update({title:title,comments:comments,date:new Date().getTime()})
+        .catch((error)=>console.log(error));
+        this.setState({editing:false});
+       }
    
     render() {
    
-     console.log('user',this.props.user);
-     console.log('res',this.props.res);
+    
       if(this.state.loading){
         return <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
                <Spinner color='blue' />
@@ -181,8 +206,9 @@ export default class MyQuestions extends Component {
                     onRefresh={this.loadNew}
                     data={this.state.data}
                     keyExtractor={(item,index)=>index.toString()}
+                    extraData={{...this.state}}
                     renderItem={({item,index}) => (
-                  
+                   
                     <View 
                      style={{flex:1,flexDirection:'column',borderWidth:1,borderTopRightRadius:10
                      ,borderBottomLeftRadius:10,borderBottomRightRadius:10,margin:5}}>
@@ -191,8 +217,16 @@ export default class MyQuestions extends Component {
                       <Text style={{margin:5}}>{this.timeConvertor(item.val.date)}</Text>
                        
                       </View>
-                        <Text style={{margin:5}}>{item.val.title}</Text>
+                      {this.state.editing ?
+                      <TextInput onChangeText={(txt)=>this.titleChange(txt,index)} style={{margin:5,color:'blue'}}>{item.val.title}</TextInput>
+                      : 
+                      <Text style={{margin:5}}>{item.val.title}</Text>
+                      }
+                      {this.state.editing ?
+                      <TextInput onChangeText={(txt)=>this.commentChange(txt,index)} style={{margin:5,color:'blue'}}>{item.val.comments}</TextInput>
+                      :
                         <Text style={{margin:5}}>{item.val.comments}</Text>
+                      }
                         <View style={{flexDirection:'row',justifyContent:'space-around'}}>
                           <Text style={{fontWeight:'bold'}}>Likes</Text>
                         <Progress.Bar style={{margin:10}} progress={this.calcLikePercentage(this.state.data[index].val.likes,this.state.data[index].val.dislikes)}
@@ -208,9 +242,17 @@ export default class MyQuestions extends Component {
                          <Button transparent onPress={()=>this.delete(this.state.data[index],index)} >
                            <Icon type="MaterialCommunityIcons" name="delete" style={{color:'red'}}/>
                          </Button>
-                         <Button transparent>
-                           <Icon type="AntDesign" name="edit" style={{color:'green'}}/>
-                         </Button>
+                         {this.state.editing ? 
+                           <Button transparent onPress={()=>this.saveChanges(this.state.data[index],index)}>
+                             <Icon type="MaterialIcons" name="save" style={{color:'blue'}}/>
+                           </Button> 
+                           :
+                           <Button transparent onPress={()=>{this.setState({editing:true})}}>
+                             <Icon type="AntDesign" name="edit" style={{color:'green'}}/>
+                           </Button>
+                         
+                        }
+                        
                         </View>
                          
                     </View>
