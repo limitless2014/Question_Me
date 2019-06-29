@@ -3,7 +3,6 @@ import {FlatList,Text,View} from'react-native';
 import {Button, Icon,Header,Left,Title,Body,Right} from 'native-base'
 import {f} from '../firebaseConfig/config';
 import { TextInput } from 'react-native-gesture-handler';
-
 export default class AnswersPage extends Component {
    
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View,FlatList, Alert } from 'react-native'
+import { Text, View,FlatList, Alert,ActivityIndicator } from 'react-native'
 import {f} from '../firebaseConfig/config';
 import {Button, Icon,Spinner,Header,Content, Thumbnail} from 'native-base'
 import * as Progress from 'react-native-progress';
@@ -153,14 +153,14 @@ export default class MyQuestions extends Component {
        
 
        saveChanges=(item,index)=>{
-       this.setState({showLoadingButton:true});
+       
         let uid=f.auth().currentUser.uid;
         let title=this.state.data[index].val.title;
         let comments=this.state.data[index].val.comments;
-        console.log('comments :',comments,'title : ',title);
-        f.database().ref(`Questions/${uid}/${item.key}/`).update({title:title,comments:comments,date:new Date().getTime()})
+        f.database().ref(`Questions/${uid}/${item.key}/`).update({title:title,comments:comments})
+        .then( this.setState({editing:!this.state.editing}))
         .catch((error)=>console.log(error));
-        this.setState({editing:false});
+       
        }
    
     render() {
@@ -213,7 +213,10 @@ export default class MyQuestions extends Component {
                      style={{flex:1,flexDirection:'column',borderWidth:1,borderTopRightRadius:10
                      ,borderBottomLeftRadius:10,borderBottomRightRadius:10,margin:5}}>
                       <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                      <Text style={{fontWeight:'bold',margin:5}}>Author : {item.val.author}</Text>
+                      {this.props.user !==undefined ?<Thumbnail style={{margin:5}} small source={{uri:this.props.user.user.photoURL}}/>  :
+                       <Thumbnail style={{margin:5}} large source={{uri:"https://cdn4.iconfinder.com/data/icons/political-elections/50/48-512.png"}}/>
+                      }
+                      <Text style={{fontWeight:'bold',margin:5}}> {item.val.author}</Text>
                       <Text style={{margin:5}}>{this.timeConvertor(item.val.date)}</Text>
                        
                       </View>
@@ -242,16 +245,16 @@ export default class MyQuestions extends Component {
                          <Button transparent onPress={()=>this.delete(this.state.data[index],index)} >
                            <Icon type="MaterialCommunityIcons" name="delete" style={{color:'red'}}/>
                          </Button>
-                         {this.state.editing ? 
+                         {this.state.editing ?
                            <Button transparent onPress={()=>this.saveChanges(this.state.data[index],index)}>
                              <Icon type="MaterialIcons" name="save" style={{color:'blue'}}/>
-                           </Button> 
+                         </Button> 
                            :
-                           <Button transparent onPress={()=>{this.setState({editing:true})}}>
+                           <Button transparent onPress={()=>{this.setState({editing:!this.state.editing})}}>
                              <Icon type="AntDesign" name="edit" style={{color:'green'}}/>
                            </Button>
-                         
                         }
+                        
                         
                         </View>
                          

@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import { Text, View,TextInput,Button } from 'react-native'
+import { Text, View,TextInput,Button,ToastAndroid } from 'react-native'
 import {Textarea,Form,Picker,Content,Header } from 'native-base';
 import {f} from '../firebaseConfig/config';
-
+var soundPlayer=require('react-native-sound');
+var succesSong=null;
 
 export default class AddQuestion extends Component {
   constructor(props){
@@ -15,22 +16,38 @@ export default class AddQuestion extends Component {
         author:'',
         selected: "computer and Technology",
         category:'',
-        bold:false
+        disabled:false
+    }
+
+    componentDidMount(){
+      succesSong=new soundPlayer('success.mp3',soundPlayer.MAIN_BUNDLE,(error)=>{
+        if(error){
+          ToastAndroid.show('error when init soundplayer',ToastAndroid.SHORT);
+        }
+      })
+     
     }
 
 
+
     createQuestion=(title,subject)=>{
+      
+        
         if(title !='' && subject !='')
         {
+          this.setState({disabled:true});
          let uid=f.auth().currentUser.uid;
          let email=f.auth().currentUser.email;
          f.database().ref(`/Questions/${uid}`)
          .push({title:title,likes:0,dislikes:0,comments:subject,category:this.state.selected,author:email,date: new Date().getTime()})
          .then((data)=>{
            //success callback
-           console.log('data ' , data)
+           console.log('data ' , data);
+           this.setState({disabled:false});
+           succesSong.play(); 
            }).catch((error)=>{
            //error callback
+           this.setState({disabled:false});
            console.log('error ' , error)
           })
         }
@@ -41,9 +58,7 @@ export default class AddQuestion extends Component {
        }
 
 
-       bold=()=>{
-         this.setState({bold:!this.state.bold});
-       }
+      
        onValueChange(value) {
         this.setState({
           selected: value
@@ -78,7 +93,7 @@ export default class AddQuestion extends Component {
                 </Form>
                 <Textarea style={{margin:5,borderWidth:1}} rowSpan={5} onChangeText={(txt)=>this.setState({comments:txt})} placeholder="Comments"/>
                 <View style={{width:'50%',alignSelf:'center',marginTop:10}}>
-                <Button title="Post" style={{alignSelf:'center',justifyContent:'center'}}
+                <Button disabled={this.state.disabled} title="Post" style={{alignSelf:'center',justifyContent:'center'}}
                  onPress={()=>this.createQuestion(this.state.title,this.state.comments)}/>
                 </View>
                 </Content>

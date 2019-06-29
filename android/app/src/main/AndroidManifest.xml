@@ -2,7 +2,7 @@
   package="com.question_me">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
