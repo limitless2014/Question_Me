@@ -43,7 +43,7 @@ switchScreen(index) {
        AppComponent = <AddQuestion/>
     }
     else{
-      AppComponent=<Questions/>
+      AppComponent=<Questions user={this.state.user}/>
     }
     return (
       

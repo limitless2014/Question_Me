@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View,TextInput,Button,ToastAndroid } from 'react-native'
+import { Text, View,TextInput,Button,ToastAndroid,ImageBackground } from 'react-native'
 import {Textarea,Form,Picker,Content,Header } from 'native-base';
 import {f} from '../firebaseConfig/config';
 var soundPlayer=require('react-native-sound');
@@ -73,7 +73,6 @@ export default class AddQuestion extends Component {
                     <Text style={{fontWeight:'bold',color:'white',fontSize:20}} >Add New Question</Text>
                 </Header>
                 <Content padder>
-
                 <TextInput style={{margin:5,borderWidth:1}} onChangeText={(txt)=>this.setState({title:txt})} placeholder="Question title"/>
                 <Form>
                     <Picker
@@ -93,10 +92,13 @@ export default class AddQuestion extends Component {
                 </Form>
                 <Textarea style={{margin:5,borderWidth:1}} rowSpan={5} onChangeText={(txt)=>this.setState({comments:txt})} placeholder="Comments"/>
                 <View style={{width:'50%',alignSelf:'center',marginTop:10}}>
-                <Button disabled={this.state.disabled} title="Post" style={{alignSelf:'center',justifyContent:'center'}}
+                <Button disabled={this.state.disabled} title="Add" style={{alignSelf:'center',justifyContent:'center'}}
                  onPress={()=>this.createQuestion(this.state.title,this.state.comments)}/>
+                 
                 </View>
+              
                 </Content>
+               
             </View>
         )
     }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { Text, View,FlatList, Alert,ActivityIndicator } from 'react-native'
-import {f} from '../firebaseConfig/config';
+import { Text, View,FlatList, Alert,ActivityIndicator,ImageBackground} from 'react-native'
+import {f, auth} from '../firebaseConfig/config';
 import {Button, Icon,Spinner,Header,Content, Thumbnail} from 'native-base'
 import * as Progress from 'react-native-progress';
 import { TextInput } from 'react-native-gesture-handler';
@@ -162,15 +162,19 @@ export default class MyQuestions extends Component {
         .catch((error)=>console.log(error));
        
        }
+       
+
+       
+
    
     render() {
-   
-    
+        
       if(this.state.loading){
         return <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
                <Spinner color='blue' />
                </View>
       }
+
         return (
             <View style={{flex:1}}>
                <Header style={{justifyContent:'center',alignItems:'center'}} >
@@ -208,10 +212,14 @@ export default class MyQuestions extends Component {
                     keyExtractor={(item,index)=>index.toString()}
                     extraData={{...this.state}}
                     renderItem={({item,index}) => (
-                   
+                     
                     <View 
                      style={{flex:1,flexDirection:'column',borderWidth:1,borderTopRightRadius:10
                      ,borderBottomLeftRadius:10,borderBottomRightRadius:10,margin:5}}>
+                      
+                      <ImageBackground source={require('../assets/question1.jpg')} resizeMode="center" style={{width:'100%'}}>  
+                      
+                        
                       <View style={{flexDirection:'row',justifyContent:'space-between'}}>
                       {this.props.user !==undefined ?<Thumbnail style={{margin:5}} small source={{uri:this.props.user.user.photoURL}}/>  :
                        <Thumbnail style={{margin:5}} large source={{uri:"https://cdn4.iconfinder.com/data/icons/political-elections/50/48-512.png"}}/>
@@ -223,7 +231,7 @@ export default class MyQuestions extends Component {
                       {this.state.editing ?
                       <TextInput onChangeText={(txt)=>this.titleChange(txt,index)} style={{margin:5,color:'blue'}}>{item.val.title}</TextInput>
                       : 
-                      <Text style={{margin:5}}>{item.val.title}</Text>
+                      <Text style={{margin:5,fontWeight:'bold'}}>{item.val.title}</Text>
                       }
                       {this.state.editing ?
                       <TextInput onChangeText={(txt)=>this.commentChange(txt,index)} style={{margin:5,color:'blue'}}>{item.val.comments}</TextInput>
@@ -257,7 +265,7 @@ export default class MyQuestions extends Component {
                         
                         
                         </View>
-                         
+                     </ImageBackground>
                     </View>
                     
                     )}

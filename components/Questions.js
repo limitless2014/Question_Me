@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { Text, View ,FlatList,TouchableHighlight} from 'react-native'
+import { Text, View ,FlatList,TouchableHighlight,ImageBackground} from 'react-native'
 import {f} from '../firebaseConfig/config';
-import {Button, Icon,Spinner,Header,Content} from 'native-base'
+import {Button, Icon,Spinner,Header,Content,Thumbnail} from 'native-base'
 import AnswersPage from './AnswersPage';
 
  export default class Questions extends Component {
@@ -158,14 +158,18 @@ import AnswersPage from './AnswersPage';
                       <TouchableHighlight underlayColor={'red'}   key={index}  onPress={()=>this.itemPressed(item,index) }>
                     <View
                      style={{flex:1,flexDirection:'column',justifyContent:'flex-end',borderWidth:1,borderTopRightRadius:10
-                     ,borderBottomLeftRadius:10,borderBottomRightRadius:10,margin:5,height:150}}
+                     ,borderBottomLeftRadius:10,borderBottomRightRadius:10,margin:5}}
                      >
+                       <ImageBackground source={require('../assets/question1.jpg')} resizeMode="center" style={{width:'100%'}}>  
                       <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                      <Text style={{fontWeight:'bold',margin:5}}>Author : {item.val.author}</Text>
+                      {this.props.user !==undefined ?<Thumbnail style={{margin:5}} small source={{uri:this.props.user.user.photoURL}}/>  :
+                       <Thumbnail style={{margin:5}} large source={{uri:"https://cdn4.iconfinder.com/data/icons/political-elections/50/48-512.png"}}/>
+                      }
+                      <Text style={{fontWeight:'bold',margin:5}}> {item.val.author}</Text>
                       <Text style={{margin:5}}>{this.timeConvertor(item.val.date)}</Text>
                       
                       </View>
-                        <Text style={{margin:5}}>{item.val.title}</Text>
+                        <Text style={{margin:5,fontWeight:'bold'}}>{item.val.title}</Text>
                         <Text style={{margin:5}}>{item.val.comments}</Text>
                         <View style={{flexDirection:'row',justifyContent:'space-around',alignItems:'center'}}>
                         <Button transparent  style={{margin:5,justifyContent:'center',marginLeft:5}} onPress={()=>this.like(item.key,item.rootkey,index)}>
@@ -177,7 +181,7 @@ import AnswersPage from './AnswersPage';
                           <Icon type="AntDesign" name="dislike2" style={{color:'red'}} />
                         </Button>
                         </View>
-                        
+                        </ImageBackground>
                     </View>
                     </TouchableHighlight>
                     )}
