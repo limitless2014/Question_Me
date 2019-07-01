@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Text, View ,FlatList,TouchableHighlight,ImageBackground} from 'react-native'
-import {f} from '../firebaseConfig/config';
+import {f, auth} from '../firebaseConfig/config';
 import {Button, Icon,Spinner,Header,Content,Thumbnail} from 'native-base'
 import AnswersPage from './AnswersPage';
 
@@ -14,7 +14,7 @@ import AnswersPage from './AnswersPage';
         answers:[],
         loading:false,
         item:null,
-        index:null
+        index:null,
     }
    
 
@@ -39,6 +39,9 @@ import AnswersPage from './AnswersPage';
             });
             this.setState({data:newData,loading:false});
           } 
+          else{
+            this.setState({loading:false});
+          } 
         }).catch((err)=>{console.log(err);this.setState({loading:false})})
       }
 
@@ -56,18 +59,57 @@ import AnswersPage from './AnswersPage';
 
        like=(key,rootkey,index)=>{
         let updatedlikes=this.state.data[index].val.likes+1;
+        let updatedLikeColor=this.state.data[index].val.likeColor='grey';
+        let updatedDislikeColor=this.state.data[index].val.dislikeColor='grey';
+        let disabledBtn=this.state.data[index].val.disabled=true;
         let newData=[...this.state.data];
-        newData[index].val.likes=updatedlikes;
-        this.setState({data:newData});
-        f.database().ref(`Questions/${rootkey}/${key}/`).update({likes:updatedlikes});
+        
+        newData[index].likeColor=updatedLikeColor;
+        newData[index].dislikeColor=updatedDislikeColor;
+        newData[index].disabled=disabledBtn;
+        
+
+        
+        if(this.state.data[index].val.users[0]==="")
+        {
+            let users=[];
+            users.push(auth.currentUser.uid);
+            newData[index].val.likes=updatedlikes;
+            this.setState({data:newData});
+            f.database().ref(`Questions/${rootkey}/${key}/`).update({likes:updatedlikes,users:users});
+        }else{
+          console.log(this.state.data[index].val.users);
+          let users=this.state.data[index].val.users;
+          if(users.find((user)=>{return user===auth.currentUser.uid;}))
+          {
+            console.log('user name exists');
+            this.setState({data:newData});
+          }else{
+            console.log('users',this.state.data[index].val.users);
+            let users=this.state.data[index].val.users;
+            users.push(auth.currentUser.uid);
+            newData[index].val.likes=updatedlikes;
+            this.setState({data:newData});
+            f.database().ref(`Questions/${rootkey}/${key}/`).update({likes:updatedlikes,users:users});
+          }
+
+        }
+        
        }
 
        dislike=(key,rootkey,index)=>{
         let updateddislikes=this.state.data[index].val.dislikes+1;
+        let updatedLikeColor=this.state.data[index].val.likeColor='grey';
+        let updatedDislikeColor=this.state.data[index].val.dislikeColor='grey';
+        let disabledBtn=this.state.data[index].val.disabled=true;
         let newData=[...this.state.data];
         newData[index].val.dislikes=updateddislikes;
+        newData[index].likeColor=updatedLikeColor;
+        newData[index].dislikeColor=updatedDislikeColor;
+        newData[index].disabled=disabledBtn;
         this.setState({data:newData});
-        f.database().ref(`Questions/${rootkey}/${key}/`).update({dislikes:updateddislikes});
+        let updatedUsers=this.state.data[index].val.users.push(auth.currentUser.uid);
+        f.database().ref(`Questions/${rootkey}/${key}/`).update({dislikes:updateddislikes,user:updatedUsers});
        }
 
 
@@ -172,13 +214,13 @@ import AnswersPage from './AnswersPage';
                         <Text style={{margin:5,fontWeight:'bold'}}>{item.val.title}</Text>
                         <Text style={{margin:5}}>{item.val.comments}</Text>
                         <View style={{flexDirection:'row',justifyContent:'space-around',alignItems:'center'}}>
-                        <Button transparent  style={{margin:5,justifyContent:'center',marginLeft:5}} onPress={()=>this.like(item.key,item.rootkey,index)}>
+                        <Button transparent disabled={item.val.disabled}  style={{margin:5,justifyContent:'center',marginLeft:5}} onPress={()=>this.like(item.key,item.rootkey,index)}>
                         <Text>{this.state.data[index].val.likes}</Text>
-                          <Icon type="AntDesign" name="like2" style={{color:'green'}} />
+                          <Icon type="AntDesign" name="like2" style={{color:item.val.likeColor}}  />
                         </Button>
-                        <Button transparent  style={{margin:5,justifyContent:'center',marginLeft:5}} onPress={()=>this.dislike(item.key,item.rootkey,index)} >
+                        <Button transparent disabled={item.val.disabled} style={{margin:5,justifyContent:'center',marginLeft:5}} onPress={()=>this.dislike(item.key,item.rootkey,index)} >
                         <Text>{this.state.data[index].val.dislikes}</Text>
-                          <Icon type="AntDesign" name="dislike2" style={{color:'red'}} />
+                          <Icon type="AntDesign" name="dislike2" style={{color:item.val.dislikeColor}}   />
                         </Button>
                         </View>
                         </ImageBackground>

@@ -2,10 +2,16 @@ import React, { Component } from 'react'
 import {FlatList,Text,View} from'react-native';
 import {Button, Icon,Header,Left,Title,Body,Right} from 'native-base'
 import {f} from '../firebaseConfig/config';
-import { TextInput } from 'react-native-gesture-handler';
+import { TextInput, ScrollView } from 'react-native-gesture-handler';
+
+
 export default class AnswersPage extends Component {
    
-
+constructor(props){
+  super(props);
+  let contentHeight= 0;
+ 
+}
    
 
  
@@ -36,7 +42,8 @@ export default class AnswersPage extends Component {
               Object.entries(answers).forEach(([key, val])=> {
                 answersArray.push(val);
               })
-              this.setState({answers:answersArray});
+              this.setState({answers:answersArray,answer:''});
+               
             }
          })
            
@@ -122,6 +129,9 @@ export default class AnswersPage extends Component {
            }
 
 
+            
+
+
     render() {
         return (
             <View style={{flex:1}}>
@@ -156,15 +166,19 @@ export default class AnswersPage extends Component {
                         </View>
                         
                     </View>
-                   
+                    
                    {this.state.answers  ? 
+                   
                         <FlatList
+                        ref={ref => this.flatList = ref}
+                        onContentSizeChange={() => this.flatList.scrollToEnd({animated: true})}
                         refreshing={this.state.refresh}
                         onRefresh={this.refresh}
                         style={{marginBottom:60}}
                         data={this.state.answers}
                         keyExtractor={(item,index)=>index.toString()}
                         renderItem={({item,index}) => (
+                         
                           <View  style={{flexDirection:'column',borderWidth:1,borderTopLeftRadius:10
                           ,borderBottomLeftRadius:10,borderBottomRightRadius:10,margin:5,height:150}}>
                              <View style={{flexDirection:'row',justifyContent:'space-between'}}>
@@ -172,19 +186,20 @@ export default class AnswersPage extends Component {
                              <Text style={{margin:5}}>{this.timeConvertor(item.time)}</Text>
                           </View>
                           <Text style={{margin:5}}>{item.answer}</Text>
-                         </View>              
+                         </View>           
                           )}
                         />  : null }  
-                     
+                   
 
                     
                     <View style={{position:'absolute',bottom:0,width:'100%',height:60,justifyContent:'center',justifyContent:'center'}}>
                       <View style={{flexDirection:'row',justifyContent:'space-around',alignItems:'center'}}>
-                        <TextInput onChangeText={(txt)=>this.setState({answer:txt})} 
+                        <TextInput    value={this.state.answer}  onChangeText={(txt)=>this.setState({answer:txt})} 
                         style={{borderWidth:1,width:'80%'}} placeholder="Type Your Answer Here"/>
-                       <Button onPress={()=>this.send(this.props.item)} rounded><Icon type="MaterialIcons" name="send"/></Button>
+                       <Button onPress={()=>this.send(this.props.item)} rounded transparent><Icon style={{color:'red'}} type="MaterialIcons" name="send"/></Button>
                        </View>
                     </View>
+                    
                     </View>     
         )
     }

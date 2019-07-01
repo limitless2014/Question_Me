@@ -31,6 +31,8 @@ export default class MyQuestions extends Component {
                 newData.push({val,key:key});
               })
             this.setState({data:newData,loading:false});
+          }else{
+            this.setState({loading:false});
           } 
         }).catch((err)=>{console.log(err);this.setState({loading:false})})
       }

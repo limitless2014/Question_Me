@@ -39,7 +39,8 @@ export default class AddQuestion extends Component {
          let uid=f.auth().currentUser.uid;
          let email=f.auth().currentUser.email;
          f.database().ref(`/Questions/${uid}`)
-         .push({title:title,likes:0,dislikes:0,comments:subject,category:this.state.selected,author:email,date: new Date().getTime()})
+         .push({title:title,likes:0,dislikes:0,comments:subject,category:this.state.selected,author:email
+          ,date: new Date().getTime(),likeColor:'green',users:[''],dislikeColor:'red',disabled:false})
          .then((data)=>{
            //success callback
            console.log('data ' , data);
