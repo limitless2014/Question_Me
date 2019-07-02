@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View ,FlatList,TouchableHighlight,ImageBackground} from 'react-native'
+import { Text, View ,FlatList,TouchableHighlight,ImageBackground,ToastAndroid} from 'react-native'
 import {f, auth} from '../firebaseConfig/config';
 import {Button, Icon,Spinner,Header,Content,Thumbnail} from 'native-base'
 import AnswersPage from './AnswersPage';
@@ -78,14 +78,12 @@ import AnswersPage from './AnswersPage';
             this.setState({data:newData});
             f.database().ref(`Questions/${rootkey}/${key}/`).update({likes:updatedlikes,users:users});
         }else{
-          console.log(this.state.data[index].val.users);
           let users=this.state.data[index].val.users;
           if(users.find((user)=>{return user===auth.currentUser.uid;}))
           {
-            console.log('user name exists');
+            ToastAndroid.show('You can like or Dislike a question once!',ToastAndroid.SHORT);
             this.setState({data:newData});
           }else{
-            console.log('users',this.state.data[index].val.users);
             let users=this.state.data[index].val.users;
             users.push(auth.currentUser.uid);
             newData[index].val.likes=updatedlikes;
@@ -103,13 +101,36 @@ import AnswersPage from './AnswersPage';
         let updatedDislikeColor=this.state.data[index].val.dislikeColor='grey';
         let disabledBtn=this.state.data[index].val.disabled=true;
         let newData=[...this.state.data];
-        newData[index].val.dislikes=updateddislikes;
+
+
+       
         newData[index].likeColor=updatedLikeColor;
         newData[index].dislikeColor=updatedDislikeColor;
         newData[index].disabled=disabledBtn;
-        this.setState({data:newData});
-        let updatedUsers=this.state.data[index].val.users.push(auth.currentUser.uid);
-        f.database().ref(`Questions/${rootkey}/${key}/`).update({dislikes:updateddislikes,user:updatedUsers});
+
+        if(this.state.data[index].val.users[0]==="")
+        {
+            let users=[];
+            users.push(auth.currentUser.uid);
+            newData[index].val.dislikes=updateddislikes;
+            this.setState({data:newData});
+            f.database().ref(`Questions/${rootkey}/${key}/`).update({dislikes:updateddislikes,users:users});
+        }else{
+          let users=this.state.data[index].val.users;
+          if(users.find((user)=>{return user===auth.currentUser.uid;}))
+          {
+            ToastAndroid.show('You can like or Dislike a question once!',ToastAndroid.SHORT);
+            this.setState({data:newData});
+          }else{
+            let users=this.state.data[index].val.users;
+            users.push(auth.currentUser.uid);
+            newData[index].val.dislikes=updateddislikes;
+            this.setState({data:newData});
+            f.database().ref(`Questions/${rootkey}/${key}/`).update({dislikes:updateddislikes,users:users});
+          }
+
+        }
+
        }
 
 
