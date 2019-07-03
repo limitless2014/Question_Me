@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import {FlatList,Text,View} from'react-native';
-import {Button, Icon,Header,Left,Title,Body,Right} from 'native-base'
+import {Button, Icon,Header,Left,Title,Body,Right,Thumbnail} from 'native-base'
 import {f} from '../firebaseConfig/config';
-import { TextInput, ScrollView } from 'react-native-gesture-handler';
+import { TextInput } from 'react-native-gesture-handler';
+import * as Progress from 'react-native-progress';
 
 
 export default class AnswersPage extends Component {
@@ -129,6 +130,36 @@ constructor(props){
            }
 
 
+           calcLikePercentage=(likes,dislikes)=>{
+            let likenum=parseInt(likes);
+            let dislikenum=parseInt(dislikes);
+            if(likenum===0){
+              return 0;
+            }
+            else{
+            const sum=likenum+dislikenum;
+            let result=likenum/sum;
+            result=result.toFixed(2)
+            return result;
+            }
+          }
+      
+      
+      
+          calcDislikePercentage=(likes,dislikes)=>{
+            let likenum=parseInt(likes);
+            let dislikenum=parseInt(dislikes);
+            if(dislikenum===0){
+              return 0;
+            }
+            else{
+            const sum=likenum+dislikenum;
+            let result=dislikenum/sum;
+            result=result.toFixed(2)
+            return result;
+            }
+          }
+
             
 
 
@@ -147,22 +178,25 @@ constructor(props){
             <Right />
             </Header>
           <View  style={{flexDirection:'column',borderWidth:1,borderTopRightRadius:10
-                     ,borderBottomLeftRadius:10,borderBottomRightRadius:10,margin:5,height:150}}>
+                     ,borderBottomLeftRadius:10,borderBottomRightRadius:10,margin:5}}>
                       <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                      {this.props.user !==undefined ?<Thumbnail style={{margin:5}} small source={{uri:this.props.user.user.photoURL}}/>  :
+                            <Thumbnail style={{margin:5}} large source={{uri:"https://cdn4.iconfinder.com/data/icons/political-elections/50/48-512.png"}}/>
+                            }
                       <Text style={{fontWeight:'bold',margin:5}}>Author : {this.props.item.val.author}</Text>
                       <Text style={{margin:5}}>{this.timeConvertor(this.props.item.val.date)}</Text>
                       </View>
-                        <Text style={{margin:5}}>{this.props.item.val.title}</Text>
+                        <Text style={{margin:5,fontWeight:'bold'}}>{this.props.item.val.title}</Text>
                         <Text style={{margin:5}}>{this.props.item.val.comments}</Text>
-                        <View style={{flexDirection:'row',justifyContent:'space-around',alignItems:'center'}}>
-                        <Button transparent  style={{margin:5,justifyContent:'center',marginLeft:5}} onPress={()=>this.like(item.key,item.rootkey,this.state.index)}>
-                        <Text>{this.props.data[this.state.index].val.likes}</Text>
-                          <Icon type="AntDesign" name="like2" style={{color:'green'}} />
-                        </Button>
-                        <Button transparent  style={{margin:5,justifyContent:'center',marginLeft:5}} onPress={()=>this.dislike(item.key,item.rootkey,this.state.index)} >
-                        <Text>{this.props.data[this.state.index].val.dislikes}</Text>
-                          <Icon type="AntDesign" name="dislike2" style={{color:'red'}} />
-                        </Button>
+                        <View style={{flexDirection:'row',justifyContent:'space-around'}}>
+                          <Text style={{fontWeight:'bold'}}>Likes</Text>
+                        <Progress.Bar style={{margin:10}} progress={this.calcLikePercentage(this.props.item.val.likes,this.props.item.val.dislikes)}
+                        size={50} />
+                        </View>
+                        <View style={{flexDirection:'row',justifyContent:'space-around'}}>
+                          <Text style={{fontWeight:'bold'}}>DisLikes</Text>
+                        <Progress.Bar style={{margin:10}} progress={this.calcDislikePercentage(this.props.item.val.likes,this.props.item.val.dislikes)}
+                        size={50} color="red" />
                         </View>
                         
                     </View>
@@ -182,6 +216,9 @@ constructor(props){
                           <View  style={{flexDirection:'column',borderWidth:1,borderTopLeftRadius:10
                           ,borderBottomLeftRadius:10,borderBottomRightRadius:10,margin:5,height:150}}>
                              <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                             {this.props.user !==undefined ?<Thumbnail style={{margin:5}} small source={{uri:this.props.user.user.photoURL}}/>  :
+                            <Thumbnail style={{margin:5}} large source={{uri:"https://cdn4.iconfinder.com/data/icons/political-elections/50/48-512.png"}}/>
+                            }
                              <Text style={{fontWeight:'bold',margin:5}}>Author : {item.author}  </Text>
                              <Text style={{margin:5}}>{this.timeConvertor(item.time)}</Text>
                           </View>

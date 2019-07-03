@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Text, View ,FlatList,TouchableHighlight,ImageBackground,ToastAndroid} from 'react-native'
 import {f, auth} from '../firebaseConfig/config';
-import {Button, Icon,Spinner,Header,Content,Thumbnail} from 'native-base'
+import {Button, Icon,Spinner,Header,Content,Thumbnail,Input,Item} from 'native-base'
 import AnswersPage from './AnswersPage';
 
  export default class Questions extends Component {
@@ -15,6 +15,7 @@ import AnswersPage from './AnswersPage';
         loading:false,
         item:null,
         index:null,
+        searchTerm:''
     }
    
 
@@ -38,6 +39,7 @@ import AnswersPage from './AnswersPage';
               })
             });
             this.setState({data:newData,loading:false});
+            this.arrayHolder=newData;
           } 
           else{
             this.setState({loading:false});
@@ -193,10 +195,39 @@ import AnswersPage from './AnswersPage';
         return Math.floor(seconds)+' second'+this.pluralCheck(seconds);
        }
 
+
+       search=(txt)=>{
+        if (!txt || txt === '') {
+        this.setState({
+          searchTerm: txt
+        })
+      }
+      let newData = this.arrayHolder.filter((question)=> {
+        let title=[];
+        title=question.val.title.toLowerCase();
+        let comments=[];
+        comments=question.val.comments.toLowerCase();
+        if(title.includes(txt.toLowerCase())){
+          question=title;
+          return question; 
+        }
+        else if(comments.includes(txt.toLowerCase()))
+        {
+         question=comments;
+         return question;
+        }
+      })
+      this.setState({data:newData})
+      
+     }
+
+
+
+
     render() {
          if(this.state.details)
          {
-           return <AnswersPage item={this.state.item} data={this.state.data} answers={this.state.answers} index={this.state.index} goback={()=>this.goback()}   />
+           return <AnswersPage user={this.props.user} item={this.state.item} data={this.state.data} answers={this.state.answers} index={this.state.index} goback={()=>this.goback()}   />
          }
 
          if(this.state.loading){
@@ -208,9 +239,18 @@ import AnswersPage from './AnswersPage';
 
         return (
                 <View style={{flex:1}} >
-                  <Header style={{justifyContent:'center',alignItems:'center'}} >
-                    <Text style={{fontWeight:'bold',color:'white',fontSize:20}} >All Questions</Text>
-                </Header>
+                   <Header searchBar rounded>
+                    <Item>
+                      <Icon name="ios-search" />
+                      <Input placeholder="Search" onChangeText={(txt)=>this.search(txt)} />
+                      <Button transparent>
+                      <Icon name="filter" type="MaterialCommunityIcons" style={{color:'black'}} />
+                      </Button>
+                    </Item>
+                    <Button transparent>
+                      <Text>Search</Text>
+                    </Button>
+                  </Header>
                 <Content padder>
                 <FlatList
                     refreshing={this.state.refresh}

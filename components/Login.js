@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text,TextInput,Button,ToastAndroid,AsyncStorage,ActivityIndicator,ImageBackground,CheckBox } from 'react-native';
+import { View, Text,TextInput,Button,ToastAndroid,AsyncStorage,ImageBackground,CheckBox,Image } from 'react-native';
 import {f,auth} from '../firebaseConfig/config'
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';
-
+import { TextLoader,LinesLoader} from 'react-native-indicator';
 
 
 
@@ -118,28 +118,37 @@ componentDidMount(){
 
 
   render() {
+    if(this.state.loading){
+      return(
+        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+         <LinesLoader color="red" />
+         <TextLoader text="Logging In" />
+        </View>);
+    }
     return (
-      <ImageBackground style={{width:'100%',height:'100%'}} resizeMode="stretch" source={require('../assets/background.png')}>
-      <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-            {this.state.loading ? <ActivityIndicator color="blue" size={"large"}/> : null}
-           <View style={{justifyContent:'center',alignItems:'center',width:'50%'}}>
+        <View style={{flex:1}}>
+          <Image style={{width:200,height:200,alignSelf:'center'}} resizeMode="contain" source={require('../assets/question1.jpg')}/>
+      
+      
+        
+           <View style={{justifyContent:'center',alignItems:'center',width:'50%',alignSelf:'center'}}>
             <TextInput defaultValue={this.state.username}  onChangeText={(txt)=>this.setState({username:txt})} placeholder="Email"
             autoCompleteType={"email"}
              style={{width:'100%',borderWidth:1,backgroundColor:'white'}}/>
             <TextInput defaultValue={this.state.PassWord}  onChangeText={(txt)=>this.setState({PassWord:txt})} secureTextEntry={this.state.showPassword}
              placeholder="PassWord"  style={{width:'100%',marginVertical:8,borderWidth:1,backgroundColor:'white'}}/>
             </View>
-            <View style={{width:'50%',flexDirection:'row',alignItems:'center'}}>
+            <View style={{width:'50%',flexDirection:'row',alignItems:'center',alignSelf:'center'}}>
             <CheckBox value={!this.state.showPassword} onValueChange={()=>{this.setState({showPassword:!this.state.showPassword})}}/>
             <Text>Show Password</Text>
             </View>
-          <View style={{width:'50%'}}>
+          <View style={{width:'50%',alignSelf:'center'}}>
             <Button title="Login" onPress={()=>this.showLoginForm()} /> 
             </View>
-            <View style={{width:'50%',marginTop:10}}>
+            <View style={{width:'50%',marginTop:10,alignSelf:'center'}}>
              <Button title="SignUp" color='red' onPress={()=>this.showSignUpForm()}/>
             </View>
-            <View style={{width:'50%',marginTop:10,position:'absolute',bottom:'10%'}} >
+            <View style={{width:'50%',marginTop:10,position:'absolute',bottom:'10%',alignSelf:'center'}} >
               <GoogleSigninButton
               style={{ width: '100%', height: 48 }}
               size={GoogleSigninButton.Size.Wide}
@@ -147,8 +156,9 @@ componentDidMount(){
               onPress={()=>this.onLoginOrRegister()}
               disabled={this.state.isSigninInProgress} />
               </View>
+      
       </View>
-      </ImageBackground>
+    
     );
   }
 }

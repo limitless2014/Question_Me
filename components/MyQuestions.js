@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View,FlatList, Alert,ActivityIndicator,ImageBackground} from 'react-native'
+import { Text, View,FlatList, Alert,ImageBackground} from 'react-native'
 import {f, auth} from '../firebaseConfig/config';
 import {Button, Icon,Spinner,Header,Content, Thumbnail} from 'native-base'
 import * as Progress from 'react-native-progress';
