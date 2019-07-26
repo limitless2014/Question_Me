@@ -4,7 +4,7 @@ import { Button,Text,Icon,Footer, FooterTab,View} from 'native-base';
 import AddQuestion from './AddQuestion';
 import MyQuestions from './MyQuestions';
 import Questions from './Questions';
-
+import CategoryPage from './CategoryPage.js';
 
 
  export default class Home extends Component {
@@ -42,6 +42,9 @@ switchScreen(index) {
     } else if(this.state.index==1) {
        AppComponent = <AddQuestion/>
     }
+    else if(this.state.index==3){
+       AppComponent=<CategoryPage navigate={this.navigate}/>
+    }
     else{
       AppComponent=<Questions user={this.state.user}/>
     }
@@ -52,6 +55,12 @@ switchScreen(index) {
      
        
      <Footer >
+            <FooterTab  style={{backgroundColor:'black'}} >
+                    <Button onPress={()=>this.switchScreen(3)} active={this.state.index ===3 ? true : false} >
+                  
+                        <Icon type="MaterialCommunityIcons" name='view-list' />
+                    </Button>
+            </FooterTab>
           <FooterTab  style={{backgroundColor:'black'}} >
             <Button onPress={()=>this.switchScreen(2)} active={this.state.index ===2 ? true : false} >
            
